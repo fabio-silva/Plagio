@@ -67,4 +67,9 @@ LinuxInputValidator::LinuxInputValidator() {
 void LinuxInputValidator::compare() {
 	int ret=checker->compareFile();
 }
+
+void LinuxInputValidator::setMinimum(int m)
+{
+	checker->setMinNrRepetedChars(m);
+}
 #endif

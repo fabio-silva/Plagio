@@ -24,6 +24,7 @@ public:
 	void setDBdirectory(string dbPath);
 	void setFileToTest(string filePath);
 	void compare();
+	void setMinimum(int m);
 
 };
 

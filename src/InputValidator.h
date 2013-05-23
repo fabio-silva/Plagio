@@ -24,6 +24,7 @@ public:
 	virtual void setFileToTest(string filePath)=0;
 	virtual void setDBdirectory(string dbPath)=0;
 	virtual void compare()=0;
+	virtual void setMinimum(int m) = 0;
 };
 
 

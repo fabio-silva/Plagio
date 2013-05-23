@@ -11,6 +11,7 @@
 #include <iostream>
 #include <windows.h>
 #include <cstdlib>
+#include "InputValidator.h"
 
 using namespace std;
 
@@ -24,8 +25,10 @@ class WindowsInputValidator: public InputValidator
 public:
 	WindowsInputValidator();
 	WindowsInputValidator(string base, string file);
-	void setBase(string b);
-	void setFile(string f);
+	void setFileToTest(string filePath);
+	void setDBdirectory(string dbPath);
+	void compare();
+	void setMinimum(int m);
 	string getNextFile();
 	string getFirstFile();
 	string getDBDirectory();
