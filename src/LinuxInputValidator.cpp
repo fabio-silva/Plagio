@@ -4,7 +4,7 @@
  *  Created on: May 23, 2013
  *      Author: root
  */
-
+#ifndef _WIN32
 #include "LinuxInputValidator.h"
 
 
@@ -67,3 +67,4 @@ LinuxInputValidator::LinuxInputValidator() {
 void LinuxInputValidator::compare() {
 	int ret=checker->compareFile();
 }
+#endif
