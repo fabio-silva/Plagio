@@ -241,6 +241,7 @@ void CopyChecker::setDB( vector<string> &files) {
 }
 
 void CopyChecker::setFilePath(string filePath) {
+	fileToCheck.close();
 	fileToCheck.open(filePath.c_str());
 }
 

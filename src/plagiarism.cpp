@@ -75,7 +75,7 @@ void menuLoop(){
 					cout <<"Introduza o novo caminho para o ficheiro: ";
 					cin>> doc;
 					try {
-						validator.setFileToTest(doc);
+					validator.setFileToTest(doc);
 					} catch (InputExeption & e) {
 						cout<<"Invalid path given: "<<e.path<<endl;
 					}
