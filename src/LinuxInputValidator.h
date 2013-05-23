@@ -11,8 +11,6 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <fstream>
-#include <sys/time.h>
-#include <sys/resource.h>
 
 class LinuxInputValidator: public InputValidator {
 
