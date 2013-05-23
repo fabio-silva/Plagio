@@ -28,6 +28,16 @@
 
 #include <sys/types.h>
 #include <dirent.h>
+
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <sys/time.h>
+#include <sys/resource.h>
+#endif
+
+
+
 using namespace std;
 
 typedef enum{
@@ -45,6 +55,7 @@ class CopyChecker {
 	vector<double> repetedCharsArray;
 	int minNrRepetedChars;
 	int validMatches;
+	double timeTaken;
 
 	/**
 	 * @brief A function that sets the first row and collumn of a given matrix to zero
@@ -139,20 +150,50 @@ class CopyChecker {
 	 * @brief A function that prints the statistics extracted from the LCS algorithm
 	 * @param result the resulting string coming from the computeDiff function
 	 * @param i the index of the file used as pattern in the dbFileList array
-	 * @param s a string containing the initial contents of the tested file
+	 * @param originalFile a string containing the initial contents of the tested file
+	 * @param pattern a string containing the initial contents of the file used as pattern
 	 * @param value the number of matched characters returned from the computeDiff function.
 	 *
 	 */
-	void printStatistics(const string& result, unsigned int i, const string& s,
+	void printStatistics(const string& result, unsigned int i, const string& originalFile,const string & pattern,
 			int value);
 
+	/**
+	 * @brief A method used to retrieve an high resolution time of the system.
+	 * @return a double with the current system time with great resolution
+	 *
+	 */
+	double get_time();
 public:
 
+	/**
+	 * @brief A simple constructor for the CopyChecker class that initializes the fileToCheck parameter as well as sets some internal parameters to default values.
+	 * @param filePath the path of the file the CopyChecker object should test
+	 *
+	 *
+	 */
 	CopyChecker(string filePath);
-	CopyChecker();
-	void setFilePath(string filePath);
 
-	//TODO document it
+	/**
+	 *
+	 * @brief An empty constructor that sets the internal parameters to the default values.
+	 *
+	 *
+	 */
+	CopyChecker();
+
+	/**
+	 * @brief A setter for the filePath. No verification is done inside the method. If the file provided is not a good one the program will not execute the comparision.
+	 * @param filePath the path of the new file to be later tested
+	 *
+	 */
+	void setFilePath(string filePath);
+	/**
+	 *
+	 * @brief A method that sets the database files path to the ones passed
+	 * @param files a vector containing the path to all the files to be used as patterns
+	 *
+	 */
 	void setDB(vector<string> &files);
 	/**
 	 * @brief A function that compares the file set as the file to be tested with the database

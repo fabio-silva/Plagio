@@ -21,10 +21,14 @@ protected:
 //	string filePath;
 	CopyChecker *checker;
 public:
+	InputValidator():checker(new CopyChecker()){}
 	virtual void setFileToTest(string filePath)=0;
 	virtual void setDBdirectory(string dbPath)=0;
-	virtual void compare()=0;
+	virtual void compare(bool print=true,int nr=-1)=0;
 	virtual void setMinimum(int m) = 0;
+	virtual ~InputValidator(){
+		delete checker;
+	}
 };
 
 

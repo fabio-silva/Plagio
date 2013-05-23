@@ -18,6 +18,7 @@ string CopyChecker::longestCommonSubsequence(ifstream & file1,ifstream & file2,i
 }
 
 string CopyChecker::longestCommonSubsequence(const string& str1,const string& str2,int *sizeOfMatch) {
+		timeTaken=get_time();
 		int len1=str1.size()+1;
 		int len2=str2.size()+1;
 
@@ -51,12 +52,11 @@ string CopyChecker::longestCommonSubsequence(const string& str1,const string& st
 		validMatches=0;
 		(*sizeOfMatch)=computeDiff(LCSMatrix,str1,str2,str1.size(),str2.size(),0,s);
 		deleteMatrix(LCSMatrix,len2);
+		timeTaken-=get_time();
+		timeTaken=-timeTaken;
 		return s.str();
 
 }
-
-
-
 
 int CopyChecker::nrOfCharsInFile(ifstream & in) {
 	int nr=0;
@@ -83,16 +83,13 @@ void CopyChecker::deleteMatrix(int** matrix,int y) {
 	}
 	delete[] matrix;
 }
-CopyChecker::CopyChecker(): minNrRepetedChars(10),validMatches(0){
+CopyChecker::CopyChecker(): minNrRepetedChars(10),validMatches(0),timeTaken(-1){
 
 }
 
-CopyChecker::CopyChecker(string filePath):fileToCheckPath(filePath),minNrRepetedChars(10),validMatches(0) {
+CopyChecker::CopyChecker(string filePath):fileToCheckPath(filePath),minNrRepetedChars(10),validMatches(0),timeTaken(-1) {
 	fileToCheck.open(filePath.c_str());
 }
-
-
-
 
 void CopyChecker::makeFirstRowAndCollumnsZero(int ** matrix,int x, int y) {
 
@@ -235,14 +232,31 @@ void CopyChecker::printMatrix(int** matrix, int x, int y) {
 
 void CopyChecker::setDB( vector<string> &files) {
 	dbFileList.clear();
-	for(int i=0;i<files.size();i++){
+	for(unsigned int i=0;i<files.size();i++){
 		dbFileList.push_back(files[i]);
 	}
 }
 
 void CopyChecker::setFilePath(string filePath) {
+	fileToCheckPath=filePath;
 	fileToCheck.close();
 	fileToCheck.open(filePath.c_str());
+}
+
+double CopyChecker::get_time() {
+	#ifdef _WIN32
+	LARGE_INTEGER t, f;
+	QueryPerformanceCounter(&t);
+	QueryPerformanceFrequency(&f);
+	return (double)t.QuadPart/(double)f.QuadPart;
+	#else
+	struct timeval t;
+	struct timezone tzp;
+	gettimeofday(&t, &tzp);
+	return t.tv_sec + t.tv_usec*1e-6;
+	#endif
+
+
 }
 
 void CopyChecker::setMinNrRepetedChars(int nr) {
@@ -252,17 +266,19 @@ void CopyChecker::setMinNrRepetedChars(int nr) {
 }
 
 void CopyChecker::printStatistics(const string& result, unsigned int i,
-		const string& s, int value) {
-	double percentage=value/(double)s.size()*100;
+		const string& testedFileContent,const string & pattern, int value) {
+	double percentage=value/(double)testedFileContent.size()*100;
 	cout << endl << "#########START##########" << endl << result << endl
 			<< "#########END##########" << endl;
 	cout << "|||||||||||||||Estatistica|||||||||||||||" << endl;
 	cout << "Tested file name: "<<fileToCheckPath<<endl;
 	cout << "Pattern file name: " << dbFileList[i] << endl;
-	cout << " Original size: " << s.size()<<" chars"<< endl;
-	cout << " Min Matching size: " << minNrRepetedChars<<" chars"<<endl;
-	cout << " Matched: " << value <<" chars"<< endl;
-	cout << " Similarity: " << percentage << "%" << endl;
+	cout << "Tested File size: " << testedFileContent.size()<<" chars"<< endl;
+	cout << "Pattern File size: " << pattern.size()<<" chars"<< endl;
+	cout << "Min Matching size: " << minNrRepetedChars<<" chars"<<endl;
+	cout << "Matched: " << value <<" chars"<< endl;
+	cout << "Similarity: " << percentage << "%" << endl;
+	cout << "Time used: " << timeTaken<< " seconds"<<endl;
 	cout << "|||||||||||||||||||||||||||||||||||||||||"<<endl;
 }
 
@@ -282,17 +298,17 @@ CheckErrorType CopyChecker::compareFile(bool print,int minMatch) {
 		repetedCharsArray.clear();
 		for(unsigned int i=0;i<dbFileList.size();i++){
 
-			ifstream f2;
+			ifstream patternFile;
 			int value;
-			f2.open(dbFileList[i].c_str());
+			patternFile.open(dbFileList[i].c_str());
 
-			if(f2.good()){
-				string s2=extractString(f2);
-				string result=longestCommonSubsequence(s,s2,&value);
+			if(patternFile.good()){
+				string pattern=extractString(patternFile);
+				string result=longestCommonSubsequence(s,pattern,&value);
 				double percentage=value*100/(double)s.size();
 				repetedCharsArray.push_back(percentage);
 				if(print){
-				printStatistics(result, i, s, value);
+				printStatistics(result, i, s,pattern, value);
 				}
 
 

@@ -64,12 +64,14 @@ LinuxInputValidator::LinuxInputValidator() {
 	checker=new CopyChecker();
 }
 
-void LinuxInputValidator::compare() {
-	int ret=checker->compareFile();
+void LinuxInputValidator::compare(bool print,int nr) {
+	checker->compareFile(print,nr);
 }
 
 void LinuxInputValidator::setMinimum(int m)
 {
 	checker->setMinNrRepetedChars(m);
 }
+
+
 #endif

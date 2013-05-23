@@ -75,14 +75,13 @@ string WindowsInputValidator::getNextFile()
 
 }
 
-void WindowsInputValidator::compare()
+void WindowsInputValidator::compare(bool print,int nr)
 {
 
 	setFileToTest(file);
 	setDBdirectory(base);
 
 
-	checker->compareFile();
+	checker->compareFile(print,nr);
 }
-
 #endif

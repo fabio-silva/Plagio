@@ -27,7 +27,7 @@ public:
 	WindowsInputValidator(string base, string file);
 	void setFileToTest(string filePath);
 	void setDBdirectory(string dbPath);
-	void compare();
+	void compare(bool print=true,int nr=-1);
 	void setMinimum(int m);
 	string getNextFile();
 	string getFirstFile();

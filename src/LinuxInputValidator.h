@@ -11,6 +11,8 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <fstream>
+#include <sys/time.h>
+#include <sys/resource.h>
 
 class LinuxInputValidator: public InputValidator {
 
@@ -23,7 +25,7 @@ public:
 	LinuxInputValidator();
 	void setDBdirectory(string dbPath);
 	void setFileToTest(string filePath);
-	void compare();
+	void compare(bool print=true,int nr=-1);
 	void setMinimum(int m);
 
 };
