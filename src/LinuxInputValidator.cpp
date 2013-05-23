@@ -54,12 +54,16 @@ void LinuxInputValidator::setFileToTest(string fPath) {
 	f.open(fPath.c_str());
 	if(f.good() && isTXT(fPath)){//if it's good and it's a txt
 		f.close();
-		checker= new CopyChecker(fPath);
+		checker->setFilePath(fPath);
 		return;
 	}
 	throw InvalidFile(fPath);
 }
 
+LinuxInputValidator::LinuxInputValidator() {
+	checker=new CopyChecker();
+}
+
 void LinuxInputValidator::compare() {
-	checker->compareFile();
+	int ret=checker->compareFile();
 }

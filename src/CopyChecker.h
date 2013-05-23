@@ -148,15 +148,12 @@ class CopyChecker {
 
 public:
 
-	/**
-	 * @brief A constructor for the CopyChecker object
-	 * @param filePath the path to the file to be tested
-	 * @param dirPath the path to the directory containing the files to be used as a pattern
-	 */
 	CopyChecker(string filePath);
+	CopyChecker();
+	void setFilePath(string filePath);
 
 	//TODO document it
-	void setDB(vector<string> files);
+	void setDB(vector<string> &files);
 	/**
 	 * @brief A function that compares the file set as the file to be tested with the database
 	 * @param print True should be passed if the output and statistics of the comparision are to be written to the stdout. True is passed by default

@@ -83,6 +83,9 @@ void CopyChecker::deleteMatrix(int** matrix,int y) {
 	}
 	delete[] matrix;
 }
+CopyChecker::CopyChecker(): minNrRepetedChars(10),validMatches(0){
+
+}
 
 CopyChecker::CopyChecker(string filePath):fileToCheckPath(filePath),minNrRepetedChars(10),validMatches(0) {
 	fileToCheck.open(filePath.c_str());
@@ -230,8 +233,15 @@ void CopyChecker::printMatrix(int** matrix, int x, int y) {
 	}
 }
 
-void CopyChecker::setDB( vector<string> files) {
-	dbFileList=files;
+void CopyChecker::setDB( vector<string> &files) {
+	dbFileList.clear();
+	for(int i=0;i<files.size();i++){
+		dbFileList.push_back(files[i]);
+	}
+}
+
+void CopyChecker::setFilePath(string filePath) {
+	fileToCheck.open(filePath.c_str());
 }
 
 void CopyChecker::setMinNrRepetedChars(int nr) {

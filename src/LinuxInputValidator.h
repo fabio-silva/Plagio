@@ -20,11 +20,9 @@ class LinuxInputValidator: public InputValidator {
 
 public:
 
-	string getDBdirectory();
-	string getFileToTest();
+	LinuxInputValidator();
 	void setDBdirectory(string dbPath);
 	void setFileToTest(string filePath);
-	vector<string> getDBFilesList();
 	void compare();
 
 };

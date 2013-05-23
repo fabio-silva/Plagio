@@ -18,7 +18,8 @@
 #endif
 using namespace std;
 
-string database, doc;
+string database="/home/mppl/Desktop/db";
+string doc="/home/mppl/Desktop/file1.txt";
 #ifdef _WIN32
 	WindowsInputValidator validator;
 #else
