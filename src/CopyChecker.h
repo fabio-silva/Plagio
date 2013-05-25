@@ -24,6 +24,7 @@
 #include <iomanip>
 #include <vector>
 #include <sstream>
+#include <stack>
 
 
 #include <sys/types.h>
@@ -55,7 +56,7 @@ class CopyChecker {
 	vector<double> repetedCharsArray;
 	int minNrRepetedChars;
 	int validMatches;
-	double timeTaken;
+	double LCSTime;
 
 	/**
 	 * @brief A function that sets the first row and collumn of a given matrix to zero
@@ -209,7 +210,15 @@ public:
 	 */
 	void setMinNrRepetedChars(int nr);
 
+	void copyToStream(const string &str, int startPos, int nrElements, stringstream &s,
+			bool marked);
 
+	int generateDiff(int ** matrix,const string & file,const string & pattern,stringstream &s);
+	void setCells(int &leftCell,int &topCell,int **matrix,int pos1,int pos2);
+	int flushSavedChars(string &buff,stack<char> & theStack);
+	string getRepetedSectionStartMarker();
+	string getRepetedSectionEndMarker();
+	void transferToStack(string &str,stack<char> & stack,bool reversedOrder);
 
 };
 

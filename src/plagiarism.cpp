@@ -17,8 +17,8 @@
 #endif
 using namespace std;
 
-string database="C:\\Users\\fabio\\Desktop\\FEUP";
-string doc="C:\\Users\\fabio\\Desktop\\f.txt";
+string database="/home/mppl/Desktop/newDB";
+string doc="/home/mppl/Desktop/db/500k.txt";
 #ifdef _WIN32
 	WindowsInputValidator validator;
 #else
