@@ -84,7 +84,7 @@ class CopyChecker {
 	 * @return a string with the contents of file1 edited in a way that it is clear which parts could be matched with the second file
 	 *
 	 */
-	string longestCommonSubsequence(ifstream & file1,ifstream & file2,int *sizeOfMatch);
+	string computeLCSandOutputResult(ifstream & file1,ifstream & file2,int *sizeOfMatch);
 	/**
 	 * @brief A method that preforms the LCS algorithm on two given string. A string with the edited content of the first one is returned. An integer is filled with the number of chars that are equal
 	 * @param str1 a string to be matched with the second
@@ -93,20 +93,18 @@ class CopyChecker {
 	 * @return a string with the contents of str1 edited in a way that it is clear which parts could be matched with the second file
 	 *
 	 */
-	string longestCommonSubsequence(const string &str1,const string &str2,int *sizeOfMatch);
+	string computeLCSandOutputResult(const string &str1,const string &str2,int *sizeOfMatch);
 
 	/**
-	 * @brief A method that edits a string according to the matrix outcomming from the LCS algorithm to make it visually perceptible the common parts between the two strings tested.
-	 * @param matrix the output matrix of the LCS algorithm
-	 * @param str1 the string tested in the LCS algorithm
-	 * @param str2 the string used as a pattern in the LCS algorithm
-	 * @param pos1 the x position of the matrix where the algorithm should start. Usually this parameter should be the length of str1 +1.
-	 * @param pos2 the y position of the matrix where the algorithm should start. Usually this parameter should be the length of str2 +1.
-	 * @param charsWaitingForPrint a parameter used in the recursion that should have the value of the nr of characters that should be printed at the end of the string without further processing. This parameter should be consistent with pos1 and pos2 or undefined behaviour will happen. Usually this vector should be 0
-	 * @param s a stringstream where the edited contents of str1 will be placed after processing
-	 * @return returns the number of matched chars between the two strings
+	 * @brief A method that fills a matrix with content as a longest common subsequence algorithm is supposed to and returns that matrix. The matrix is a (str1.size()+1)*(str2.size()+1) matrix. It should be freed after it's no longer needed
+	 * @param str1 one of the strings to be used on the LCS algorithm
+	 * @param str2 another string to be used on the LCS algorithm
+	 * @ return A matrix filled with the result of the LCS algorithm. It has (str2.size()+1) rows and (str1.size()+1) columns
+	 *
 	 */
-	int computeDiff(int **matrix,const string &str1,const string &str2,int pos1,int pos2,int charsWaitingForPrint,stringstream &s);
+
+	int ** LCS(const string& str1,const string str2);
+
 
 	/**
 	 * @brief A method that finds the longest common substring between two strings
@@ -210,14 +208,58 @@ public:
 	 */
 	void setMinNrRepetedChars(int nr);
 
-	void copyToStream(const string &str, int startPos, int nrElements, stringstream &s,
-			bool marked);
-
+	/**
+	 * @brief A method that generates a diff similar output and returns the number of characters that match between two files. It takes the output from the LCS algorithm
+	 * @param matrix the matrix comming from the LCS algorithm
+	 * @param file the file to be tested and whose content is to be displayed in a fancy way
+	 * @param pattern the file used as a pattern
+	 * @param s the stringstream to be filled with the output of the algorithm
+	 * @return the number of characters that were matchted on the pattern
+	 */
 	int generateDiff(int ** matrix,const string & file,const string & pattern,stringstream &s);
+	/**
+	 * @brief An helper method that sets two intergers to the values of the cell immediately above and left
+	 * @param leftCell the value to be filled in with the value of the left cell
+	 * @param topCell the value to be filled in with the value of the cell immediately above
+	 * @param pos1 the number of the column of the current cell
+	 * @param pos2 the number of the line of the current cell
+	 * @param matrix the matrix where the cells are
+	 *
+	 */
 	void setCells(int &leftCell,int &topCell,int **matrix,int pos1,int pos2);
+
+	/**
+	 * @brief A method that places the content of a string in a stack. If the content has at least minNrRepetedChars elements then it's enclosed in a section marked in a special way
+	 * @param buff the string to be transfered to the stack
+	 * @param theStack the stack where the contents of the string is to be placed
+	 * @return the number of matches chars placed in the stack
+	 *
+	 *
+	 */
 	int flushSavedChars(string &buff,stack<char> & theStack);
+	/**
+	 * @brief A method that returns a string with a marker for the start of a matched section of a string
+	 * @return A string with a start section marker
+	 *
+	 *
+	 */
 	string getRepetedSectionStartMarker();
+	/**
+	 * @brief A method that returns a string with a marker for the end of a matched section of a string
+	 * @return A string with a end section marker
+	 *
+	 *
+	 */
 	string getRepetedSectionEndMarker();
+	/**
+	 * @brief A method that transfers a string to a stack in a particular order
+	 * @param str the string to be transfered. After the execution of the method it will be empty
+	 * @param stack the stack to recieve the content of the string
+	 * @param reversedOrder a bool indicating the order in which the content of str is to be placed on the stack
+	 *
+	 *
+	 *
+	 */
 	void transferToStack(string &str,stack<char> & stack,bool reversedOrder);
 
 };
