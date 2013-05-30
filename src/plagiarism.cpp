@@ -1,7 +1,7 @@
 
 /**
- * @mainpage A simple plagiarism checker that searches common sequences of characters between a file and a database of files
- *
+ * @file plagiarism
+ * @brief A file containing the main function and some other basic functions
  *
  *
  */
@@ -27,51 +27,83 @@ string doc="/home/mppl/Desktop/db/500k.txt";
 
 
 
-
-
+/**
+ * @fn A function that swaps the value of the database and doc strings
+ *
+ */
 void swap(){
 	string temp=database;
 	database=doc;
 	doc=temp;
 }
 
+/**
+ * @fn A function that implements the compare command of the program
+ *
+ */
 void compare(){
 	try {
 		validator.setDBdirectory(database);
 		validator.setFileToTest(doc);
 		validator.compare();
-	} catch (InputExeption & e) {
+	} catch (InputException & e) {
 		cout<<"Invalid path given: "<<e.path<<endl;
 	}
 }
+
+/**
+ * @fn A function that implements the change data base folder functionality of this program
+ *
+ *
+ */
 void changeDB(){cout <<"Introduza o novo caminho para a base de dados: " << endl;
 string temp=database;
 cin>> database;
 try {
 	validator.setDBdirectory(database);
-} catch (InputExeption & e) {
+} catch (InputException & e) {
 	cout<<"Invalid path given: "<<e.path<<endl;
 	database=temp;
 }
 }
+
+/**
+ * @fn A function that implements the change file path functionality of this program
+ *
+ *
+ */
 void changeFilePath(){
 	cout <<"Introduza o novo caminho para o ficheiro: " << endl;
 	string temp=doc;
 	cin>> doc;
 	try {
 	validator.setFileToTest(doc);
-	} catch (InputExeption & e) {
+	} catch (InputException & e) {
 		cout<<"Invalid path given: "<<e.path<<endl;
 		doc=temp;
 	}
 
 }
+
+/**
+ * @fn A function that implements the change minimum number of necessary chars for a match functionality of this program
+ *
+ *
+ */
+
 void setMinimum(){
 	int minimo;
 	cout <<"Introduz o novo numero minimo: ";
 	cin >> minimo;
 	validator.setMinimum(minimo);
 }
+
+/**
+ * @fn A function with an infinite loop that prompts the user with a menu and asks it for input
+ *
+ *
+ */
+
 void menuLoop(){
 	int opcao = 0;
 	while(1){
@@ -83,6 +115,7 @@ void menuLoop(){
 		cout <<"3. Mudar caminho para base de dados" << endl;
 		cout <<"4. Mudar caminho para ficheiro a testar" << endl;
 		cout <<"5. Alterar numero minimo de caracteres para correspondencia" <<endl;
+		cout <<"6. Exit"<<endl;
 		cin >> opcao;
 
 
@@ -103,6 +136,9 @@ void menuLoop(){
 				setMinimum();
 				break;
 
+			case 6:
+				exit(0);
+				break;
 			default:
 				break;
 		}

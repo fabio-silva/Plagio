@@ -17,50 +17,24 @@
 
 
 
-string CopyChecker::longestCommonSubsequence(ifstream & file1,ifstream & file2,int *sizeOfMatch) {
+string CopyChecker::computeLCSandOutputResult(ifstream & file1,ifstream & file2,int *sizeOfMatch) {
 
 	string s1=extractString(file1);
 	string s2=extractString(file2);
 
-	return longestCommonSubsequence(s1,s2,sizeOfMatch);
+	return computeLCSandOutputResult(s1,s2,sizeOfMatch);
 
 }
 
-string CopyChecker::longestCommonSubsequence(const string& str1,const string& str2,int *sizeOfMatch) {
+string CopyChecker::computeLCSandOutputResult(const string& str1,const string& str2,int *sizeOfMatch) {
 		LCSTime=get_time();
-		int len1=str1.size()+1;
-		int len2=str2.size()+1;
 
-		int **LCSMatrix=getMatrix(len1,len2);
-
-		makeFirstRowAndCollumnsZero(LCSMatrix,len1,len2);
-
-		char char1,char2;
-		for(int row=1;row<len2;row++){
-
-
-			char2=str2[row-1];
-			for(int col=1;col<len1;col++){
-				int upperEl=LCSMatrix[row-1][col];
-				int leftEl=LCSMatrix[row][col-1];
-
-				char1=str1[col-1];
-
-				if(char1==char2){
-					LCSMatrix[row][col]=LCSMatrix[row-1][col-1]+1;
-				}
-
-				else{
-					LCSMatrix[row][col]=_max(leftEl,upperEl);
-				}
-			}
-		}
-		//printMatrix(LCSMatrix,len1,len2);
+		int** LCSMatrix=LCS(str1,str2);
 
 		stringstream s;
 		validMatches=0;
 		(*sizeOfMatch)=generateDiff(LCSMatrix,str1,str2,s);
-		deleteMatrix(LCSMatrix,len2);
+		deleteMatrix(LCSMatrix,str2.size()+1);
 		LCSTime-=get_time();
 		LCSTime=-LCSTime;
 		return s.str();
@@ -150,63 +124,6 @@ string CopyChecker::longestCommonSubstring(ifstream& file1, ifstream& file2) {
 
 	return s;
 
-
-}
-
-int CopyChecker::computeDiff(int **matrix,const string &str1,const string &str2,int pos1,int pos2,int charsWaitingForPrint,stringstream &s) {
-
-	int leftCell,topCell;
-	bool marked=false;
-
-	if(pos1==0){leftCell=-1;}
-	else{leftCell=matrix[pos2][pos1-1];}
-
-	if(pos2==0){topCell=-1;}
-	else{topCell=matrix[pos2-1][pos1];}
-
-	if(str2[pos2-1]==str1[pos1-1]){//if we got a match
-		if(pos1>0 && pos2>0){
-			computeDiff(matrix,str1,str2,pos1-1,pos2-1,charsWaitingForPrint+1,s);//call printDiff and say we have a char waiting to be printed
-		}
-		else{
-			if(charsWaitingForPrint>=minNrRepetedChars){
-				validMatches+=charsWaitingForPrint;
-				marked=true;
-			}
-			copyToStream(str1,0,charsWaitingForPrint,s,marked);
-		}
-	}
-
-	else if(leftCell>topCell){
-
-		if(pos1>0){computeDiff(matrix,str1,str2,pos1-1,pos2,0,s);}
-
-		s<<str1[pos1-1];
-		if(charsWaitingForPrint>0){
-			if(charsWaitingForPrint>=minNrRepetedChars){//if it's a sequence meaningfull to be noticed as a copied one
-				validMatches+=charsWaitingForPrint;
-				marked=true;
-			}
-			copyToStream(str1,pos1,charsWaitingForPrint,s,marked);
-
-		}
-	}
-	else if(topCell>=leftCell){
-
-		if(pos2>0){computeDiff(matrix,str1,str2,pos1,pos2-1,0,s);}
-
-		if(charsWaitingForPrint>0){
-
-			if(charsWaitingForPrint>=minNrRepetedChars){//if it's a sequence meaningfull to be noticed as a copied one
-				validMatches+=charsWaitingForPrint;
-				marked=true;
-			}
-			copyToStream(str1,pos1,charsWaitingForPrint,s,marked);
-		}
-
-	}
-
-	return validMatches;
 
 }
 
@@ -308,7 +225,8 @@ CheckErrorType CopyChecker::compareFile(bool print,int minMatch) {
 
 			if(patternFile.good()){
 				string pattern=extractString(patternFile);
-				string result=longestCommonSubsequence(s,pattern,&value);
+				string result=computeLCSandOutputResult(s,pattern,&value);
+				validMatches=value;
 				double percentage=value*100/(double)s.size();
 				repetedCharsArray.push_back(percentage);
 				if(print){
@@ -321,18 +239,6 @@ CheckErrorType CopyChecker::compareFile(bool print,int minMatch) {
 		}
 		if(repetedCharsArray.size()==0){return NoDBFilesError;}
 		return NoError;
-}
-
-void CopyChecker::copyToStream(const string& str, int startPos, int nrElements,stringstream& s, bool marked) {
-	string subStr=str.substr(startPos,nrElements);
-	if(marked){
-
-		s<<KRED<<subStr<<KNRM;
-	}
-	else{
-		s<<subStr;
-	}
-
 }
 
 int CopyChecker::generateDiff(int** matrix,const string& file,const string& pattern, stringstream &s) {
@@ -401,7 +307,6 @@ int CopyChecker::flushSavedChars(string& buff, stack<char>& theStack) {
 	if(!buff.empty()){
 		int ptr=0;
 		if(buff.size()>=minNrRepetedChars){
-
 			string marker=getRepetedSectionEndMarker();
 			transferToStack(marker,theStack,true);//true to reverse order since the string
 
@@ -441,6 +346,37 @@ string CopyChecker::getRepetedSectionEndMarker() {
 #else
 	return KNRM;
 #endif
+}
+
+int** CopyChecker::LCS(const string& str1, const string str2) {
+	int len1=str1.size()+1;
+		int len2=str2.size()+1;
+
+		int **LCSMatrix=getMatrix(len1,len2);
+
+		makeFirstRowAndCollumnsZero(LCSMatrix,len1,len2);
+
+		char char1,char2;
+		for(int row=1;row<len2;row++){
+
+
+			char2=str2[row-1];
+			for(int col=1;col<len1;col++){
+				int upperEl=LCSMatrix[row-1][col];
+				int leftEl=LCSMatrix[row][col-1];
+
+				char1=str1[col-1];
+
+				if(char1==char2){
+					LCSMatrix[row][col]=LCSMatrix[row-1][col-1]+1;
+				}
+
+				else{
+					LCSMatrix[row][col]=_max(leftEl,upperEl);
+				}
+			}
+		}
+		return LCSMatrix;
 }
 
 void CopyChecker::transferToStack(string& str, stack<char>& stack,
